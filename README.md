@@ -12,6 +12,12 @@ observation parameters to the agents:
 * Horizontal distance to the next pipe;
 * Difference between the player's y position and the next hole's y position.
 
+<p align="center">
+  <img align="center" 
+       src="https://github.com/Talendar/flappy-bird-gym/blob/main/imgs/observations.png?raw=true" 
+       width="300" height="150"/>
+</p>
+
 In the future, I also intend to implement a version of the environment that provides an
 image representing the game's screen as observation.
 
