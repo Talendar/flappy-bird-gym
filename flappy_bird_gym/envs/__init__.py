@@ -1,4 +1,3 @@
-# MIT License
 #
 # Copyright (c) 2020 Gabriel Nogueira (Talendar)
 #
@@ -21,24 +20,7 @@
 # SOFTWARE.
 # ==============================================================================
 
-""" Registers the gym environment and exports the `gym.make` function.
+""" Exposes the environment class.
 """
 
-import os
-os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
-
 from flappy_bird_gym.envs.flappy_bird_env import FlappyBirdEnv
-from flappy_bird_gym import original_game
-
-from gym import make
-from gym.envs.registration import register
-
-register(
-    id="FlappyBird-v0",
-    entry_point="flappy_bird_gym:FlappyBirdEnv",
-)
-
-__all__ = [
-    make.__name__,
-    FlappyBirdEnv.__name__,
-]

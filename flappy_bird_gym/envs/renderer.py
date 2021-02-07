@@ -33,7 +33,7 @@ from typing import Tuple
 
 import pygame
 
-from gym_flappy_bird.envs import utils
+from flappy_bird_gym.envs import utils
 
 PLAYER_ROT_THR = 20  # rotation threshold
 

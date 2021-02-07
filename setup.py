@@ -32,13 +32,13 @@ _VERSION = "0.0.1"
 # Short description.
 short_description = "An OpenAI gym environment for the Flappy Bird game."
 
-# Packages needed for NEvoPy to run.
+# Packages needed for the environment to run.
 # The compatible release operator (`~=`) is used to match any candidate version
 # that is expected to be compatible with the specified version.
 REQUIRED_PACKAGES = [
-    "pygame ~= 2.0.1",
-    "numpy ~= 1.19.5",
     "gym ~= 0.18.0",
+    "numpy ~= 1.19.5",
+    "pygame ~= 2.0.1",
 ]
 
 # Packages which are only needed for testing code.
@@ -86,5 +86,17 @@ setuptools.setup(
     ],
     license="MIT License",
     python_requires=">=3.6",
-    keywords="gym reinforcement learning flappy bird",
+    keywords=' '.join([
+        "Flappy-Bird"
+        "Game",
+        "Gym",
+        "OpenAI-Gym",
+        "Reinforcement-Learning",
+        "Reinforcement-Learning-Environment",
+    ]),
+    entry_points={
+        'console_scripts': [
+            'flappy_bird_gym = flappy_bird_gym.cli:main',
+        ],
+    },
 )

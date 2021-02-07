@@ -36,8 +36,8 @@ from pygame import mixer as pyg_mixer
 from pygame import Rect
 from pygame.transform import flip as img_flip
 
-SPRITES_PATH = "./assets/sprites"
-AUDIO_PATH = "./assets/audio"
+SPRITES_PATH = "flappy_bird_gym/assets/sprites"
+AUDIO_PATH = "flappy_bird_gym/assets/audio"
 
 
 def pixel_collision(rect1: Rect,
@@ -122,15 +122,15 @@ def load_sounds() -> Dict[str, pyg_mixer.Sound]:
     pyg_mixer.init()
     sounds = {}
 
-    if 'win' in sys.platform:
-        soundExt = '.wav'
+    if "win" in sys.platform:
+        soundExt = ".wav"
     else:
-        soundExt = '.ogg'
+        soundExt = ".ogg"
 
-    sounds['die'] = pyg_mixer.Sound('assets/audio/die' + soundExt)
-    sounds['hit'] = pyg_mixer.Sound('assets/audio/hit' + soundExt)
-    sounds['point'] = pyg_mixer.Sound('assets/audio/point' + soundExt)
-    sounds['swoosh'] = pyg_mixer.Sound('assets/audio/swoosh' + soundExt)
-    sounds['wing'] = pyg_mixer.Sound('assets/audio/wing' + soundExt)
+    sounds["die"] = pyg_mixer.Sound(AUDIO_PATH + "/die" + soundExt)
+    sounds["hit"] = pyg_mixer.Sound(AUDIO_PATH + "/hit" + soundExt)
+    sounds["point"] = pyg_mixer.Sound(AUDIO_PATH + "/point" + soundExt)
+    sounds["swoosh"] = pyg_mixer.Sound(AUDIO_PATH + "/swoosh" + soundExt)
+    sounds["wing"] = pyg_mixer.Sound(AUDIO_PATH + "/wing" + soundExt)
 
     return sounds

@@ -25,29 +25,19 @@
 """
 
 import time
-
-import pygame
-
-from gym_flappy_bird.envs.flappy_bird_env import FlappyBirdEnv
+import flappy_bird_gym
 
 
-if __name__ == "__main__":
-    env = FlappyBirdEnv()
-    clock = pygame.time.Clock()
+def main():
+    # env = gym.make("flappy_bird_gym:FlappyBird-v0")
+    env = flappy_bird_gym.make("FlappyBird-v0")
     score = 0
-
     obs = env.reset()
     while True:
         env.render()
 
-        # Getting action:
-        action = 0
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-            if (event.type == pygame.KEYDOWN and
-                    (event.key == pygame.K_SPACE or event.key == pygame.K_UP)):
-                action = 1
+        # Getting random action:
+        action = env.action_space.sample()
 
         # Processing:
         obs, reward, done, info = env.step(action)
@@ -56,9 +46,13 @@ if __name__ == "__main__":
         print(f"Obs: {obs}\n"
               f"Score: {score}\n")
 
-        clock.tick(30)
+        time.sleep(1 / 30)
 
         if done:
             env.render()
             time.sleep(0.5)
             break
+
+
+if __name__ == "__main__":
+    main()

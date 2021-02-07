@@ -29,8 +29,8 @@ import gym
 import numpy as np
 from gym import spaces
 
-from gym_flappy_bird.envs.game_logic import FlappyBirdLogic, PIPE_WIDTH
-from gym_flappy_bird.envs.renderer import FlappyBirdRenderer
+from flappy_bird_gym.envs.game_logic import FlappyBirdLogic, PIPE_WIDTH
+from flappy_bird_gym.envs.renderer import FlappyBirdRenderer
 
 
 class FlappyBirdEnv(gym.Env):

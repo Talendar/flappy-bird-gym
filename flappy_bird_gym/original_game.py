@@ -1,3 +1,10 @@
+""" Original Flappy Bird game by `sourahbhv`.
+
+Copy of the code in the "FlapPyBird" repository on GitHub
+(https://github.com/sourabhv/FlapPyBird) by `sourahbhv`. Minor alterations were
+made on the code in order to improve readability.
+"""
+
 from itertools import cycle
 import random
 import sys
@@ -5,6 +12,7 @@ import sys
 import pygame
 from pygame.locals import *
 
+ASSETS_DIR = "./flappy_bird_gym/assets"
 
 FPS = 30
 SCREEN_WIDTH = 288
@@ -19,34 +27,34 @@ IMAGES, SOUNDS, HITMASKS = {}, {}, {}
 PLAYERS_LIST = (
     # red bird
     (
-        'assets/sprites/redbird-upflap.png',
-        'assets/sprites/redbird-midflap.png',
-        'assets/sprites/redbird-downflap.png',
+        ASSETS_DIR + '/sprites/redbird-upflap.png',
+        ASSETS_DIR + '/sprites/redbird-midflap.png',
+        ASSETS_DIR + '/sprites/redbird-downflap.png',
     ),
     # blue bird
     (
-        'assets/sprites/bluebird-upflap.png',
-        'assets/sprites/bluebird-midflap.png',
-        'assets/sprites/bluebird-downflap.png',
+        ASSETS_DIR + '/sprites/bluebird-upflap.png',
+        ASSETS_DIR + '/sprites/bluebird-midflap.png',
+        ASSETS_DIR + '/sprites/bluebird-downflap.png',
     ),
     # yellow bird
     (
-        'assets/sprites/yellowbird-upflap.png',
-        'assets/sprites/yellowbird-midflap.png',
-        'assets/sprites/yellowbird-downflap.png',
+        ASSETS_DIR + '/sprites/yellowbird-upflap.png',
+        ASSETS_DIR + '/sprites/yellowbird-midflap.png',
+        ASSETS_DIR + '/sprites/yellowbird-downflap.png',
     ),
 )
 
 # list of backgrounds
 BACKGROUNDS_LIST = (
-    'assets/sprites/background-day.png',
-    'assets/sprites/background-night.png',
+    ASSETS_DIR + '/sprites/background-day.png',
+    ASSETS_DIR + '/sprites/background-night.png',
 )
 
 # list of pipes
 PIPES_LIST = (
-    'assets/sprites/pipe-green.png',
-    'assets/sprites/pipe-red.png',
+    ASSETS_DIR + '/sprites/pipe-green.png',
+    ASSETS_DIR + '/sprites/pipe-red.png',
 )
 
 
@@ -59,24 +67,24 @@ def main():
 
     # numbers sprites for score display
     IMAGES['numbers'] = (
-        pygame.image.load('assets/sprites/0.png').convert_alpha(),
-        pygame.image.load('assets/sprites/1.png').convert_alpha(),
-        pygame.image.load('assets/sprites/2.png').convert_alpha(),
-        pygame.image.load('assets/sprites/3.png').convert_alpha(),
-        pygame.image.load('assets/sprites/4.png').convert_alpha(),
-        pygame.image.load('assets/sprites/5.png').convert_alpha(),
-        pygame.image.load('assets/sprites/6.png').convert_alpha(),
-        pygame.image.load('assets/sprites/7.png').convert_alpha(),
-        pygame.image.load('assets/sprites/8.png').convert_alpha(),
-        pygame.image.load('assets/sprites/9.png').convert_alpha()
+        pygame.image.load(ASSETS_DIR + '/sprites/0.png').convert_alpha(),
+        pygame.image.load(ASSETS_DIR + '/sprites/1.png').convert_alpha(),
+        pygame.image.load(ASSETS_DIR + '/sprites/2.png').convert_alpha(),
+        pygame.image.load(ASSETS_DIR + '/sprites/3.png').convert_alpha(),
+        pygame.image.load(ASSETS_DIR + '/sprites/4.png').convert_alpha(),
+        pygame.image.load(ASSETS_DIR + '/sprites/5.png').convert_alpha(),
+        pygame.image.load(ASSETS_DIR + '/sprites/6.png').convert_alpha(),
+        pygame.image.load(ASSETS_DIR + '/sprites/7.png').convert_alpha(),
+        pygame.image.load(ASSETS_DIR + '/sprites/8.png').convert_alpha(),
+        pygame.image.load(ASSETS_DIR + '/sprites/9.png').convert_alpha()
     )
 
     # game over sprite
-    IMAGES['gameover'] = pygame.image.load('assets/sprites/gameover.png').convert_alpha()
+    IMAGES['gameover'] = pygame.image.load(ASSETS_DIR + '/sprites/gameover.png').convert_alpha()
     # message sprite for welcome screen
-    IMAGES['message'] = pygame.image.load('assets/sprites/message.png').convert_alpha()
+    IMAGES['message'] = pygame.image.load(ASSETS_DIR + '/sprites/message.png').convert_alpha()
     # base (ground) sprite
-    IMAGES['base'] = pygame.image.load('assets/sprites/base.png').convert_alpha()
+    IMAGES['base'] = pygame.image.load(ASSETS_DIR + '/sprites/base.png').convert_alpha()
 
     # sounds
     if 'win' in sys.platform:
@@ -84,11 +92,11 @@ def main():
     else:
         soundExt = '.ogg'
 
-    SOUNDS['die'] = pygame.mixer.Sound('assets/audio/die' + soundExt)
-    SOUNDS['hit'] = pygame.mixer.Sound('assets/audio/hit' + soundExt)
-    SOUNDS['point'] = pygame.mixer.Sound('assets/audio/point' + soundExt)
-    SOUNDS['swoosh'] = pygame.mixer.Sound('assets/audio/swoosh' + soundExt)
-    SOUNDS['wing'] = pygame.mixer.Sound('assets/audio/wing' + soundExt)
+    SOUNDS['die'] = pygame.mixer.Sound(ASSETS_DIR + '/audio/die' + soundExt)
+    SOUNDS['hit'] = pygame.mixer.Sound(ASSETS_DIR + '/audio/hit' + soundExt)
+    SOUNDS['point'] = pygame.mixer.Sound(ASSETS_DIR + '/audio/point' + soundExt)
+    SOUNDS['swoosh'] = pygame.mixer.Sound(ASSETS_DIR + '/audio/swoosh' + soundExt)
+    SOUNDS['wing'] = pygame.mixer.Sound(ASSETS_DIR + '/audio/wing' + soundExt)
 
     while True:
         # select random background sprites

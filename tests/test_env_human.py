@@ -21,24 +21,49 @@
 # SOFTWARE.
 # ==============================================================================
 
-""" Registers the gym environment and exports the `gym.make` function.
+""" Tests the flappy bird environment with a human player.
 """
 
-import os
-os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
+import time
 
-from flappy_bird_gym.envs.flappy_bird_env import FlappyBirdEnv
-from flappy_bird_gym import original_game
+import pygame
+import flappy_bird_gym
 
-from gym import make
-from gym.envs.registration import register
 
-register(
-    id="FlappyBird-v0",
-    entry_point="flappy_bird_gym:FlappyBirdEnv",
-)
+def main():
+    # env = gym.make("flappy_bird_gym:FlappyBird-v0")
+    env = flappy_bird_gym.make("FlappyBird-v0")
 
-__all__ = [
-    make.__name__,
-    FlappyBirdEnv.__name__,
-]
+    clock = pygame.time.Clock()
+    score = 0
+
+    obs = env.reset()
+    while True:
+        env.render()
+
+        # Getting action:
+        action = 0
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if (event.type == pygame.KEYDOWN and
+                    (event.key == pygame.K_SPACE or event.key == pygame.K_UP)):
+                action = 1
+
+        # Processing:
+        obs, reward, done, info = env.step(action)
+
+        score += reward
+        print(f"Obs: {obs}\n"
+              f"Score: {score}\n")
+
+        clock.tick(30)
+
+        if done:
+            env.render()
+            time.sleep(0.5)
+            break
+
+
+if __name__ == "__main__":
+    main()
