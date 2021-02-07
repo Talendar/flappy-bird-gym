@@ -28,6 +28,8 @@ GitHub repository by `sourahbhv` (https://github.com/sourabhv/FlapPyBird),
 released under the MIT license.
 """
 
+import os
+from pathlib import Path
 import sys
 from typing import Any, Dict, List
 
@@ -36,8 +38,11 @@ from pygame import mixer as pyg_mixer
 from pygame import Rect
 from pygame.transform import flip as img_flip
 
-SPRITES_PATH = "flappy_bird_gym/assets/sprites"
-AUDIO_PATH = "flappy_bird_gym/assets/audio"
+
+_BASE_DIR = Path(os.path.dirname(os.path.realpath(__file__))).parent
+
+SPRITES_PATH = str(_BASE_DIR / "assets/sprites")
+AUDIO_PATH = str(_BASE_DIR / "assets/audio")
 
 
 def pixel_collision(rect1: Rect,
