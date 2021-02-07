@@ -9,10 +9,8 @@ game. It's based on [FlapPyBird](https://github.com/sourabhv/FlapPyBird), by
 [@sourabhv](https://github.com/sourabhv). Currently, the environment provides the following
 observation parameters to the agents: 
 
-* The bird's *y* position;
-* The bird's vertical velocity;
 * Horizontal distance to the next pipe;
-* The next pipe's *y* position.
+* Difference between the player's y position and the next hole's y position.
 
 In the future, I also intend to implement a version of the environment that provides an
 image representing the game's screen as observation.

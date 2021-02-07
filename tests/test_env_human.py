@@ -54,14 +54,14 @@ def main():
         obs, reward, done, info = env.step(action)
 
         score += reward
-        print(f"Obs: {obs}\n"
-              f"Score: {score}\n")
+        print(f"Obs: {obs}")
+        print(f"Score: {score}")
 
-        clock.tick(30)
+        clock.tick(12)
 
         if done:
             env.render()
-            time.sleep(0.5)
+            time.sleep(0.6)
             break
 
     env.close()

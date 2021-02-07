@@ -27,7 +27,7 @@
 from typing import List
 import setuptools
 
-_VERSION = "0.1.3"
+_VERSION = "0.2.0"
 
 # Short description.
 short_description = "An OpenAI gym environment for the Flappy Bird game."

@@ -31,8 +31,8 @@ import pygame
 from gym import spaces
 
 from flappy_bird_gym.envs.game_logic import FlappyBirdLogic
-from flappy_bird_gym.envs.game_logic import PIPE_WIDTH
-from flappy_bird_gym.envs.game_logic import PLAYER_MAX_VEL_Y
+from flappy_bird_gym.envs.game_logic import PIPE_WIDTH, PIPE_HEIGHT
+from flappy_bird_gym.envs.game_logic import PLAYER_WIDTH, PLAYER_HEIGHT
 from flappy_bird_gym.envs.renderer import FlappyBirdRenderer
 
 
@@ -44,10 +44,9 @@ class FlappyBirdEnv(gym.Env):
     passes a pipe.
 
     About the observation space:
-        [0] Bird y position;
-        [1] Bird y velocity;
-        [2] Horizontal distance to the next pipe;
-        [3] y position of the next pipe.
+        [0] Horizontal distance to the next pipe;
+        [1] Difference between the player's y position and the next hole's y
+            position.
 
     Args:
         screen_size (Tuple[int, int]): The screen's width and height.
@@ -73,7 +72,7 @@ class FlappyBirdEnv(gym.Env):
                  background: str = "day") -> None:
         self.action_space = spaces.Discrete(2)
         self.observation_space = spaces.Box(-np.inf, np.inf,
-                                            shape=(4,),
+                                            shape=(2,),
                                             dtype=np.float32)
         self._screen_size = screen_size
         self._normalize_obs = normalize_obs
@@ -88,28 +87,30 @@ class FlappyBirdEnv(gym.Env):
         self._bg_type = background
 
     def _get_observation(self):
-        next_pipe = None
-        for pipe in self._game.lower_pipes:
-            if (pipe["x"] + PIPE_WIDTH / 2) > self._game.player_x:
-                next_pipe = pipe
+        up_pipe = low_pipe = None
+        h_dist = 0
+        for up_pipe, low_pipe in zip(self._game.upper_pipes,
+                                     self._game.lower_pipes):
+            h_dist = (low_pipe["x"] + PIPE_WIDTH / 2
+                      - (self._game.player_x - PLAYER_WIDTH / 2))
+            h_dist += 3  # extra distance to compensate for the buggy hit-box
+            if h_dist >= 0:
                 break
 
+        upper_pipe_y = up_pipe["y"] + PIPE_HEIGHT
+        lower_pipe_y = low_pipe["y"]
         player_y = self._game.player_y
-        player_vel_y = self._game.player_vel_y
-        next_pipe_dist = (next_pipe["x"] + PIPE_WIDTH) / 2 - self._game.player_x
-        next_pipe_y = next_pipe["y"]
+
+        v_dist = (upper_pipe_y + lower_pipe_y) / 2 - (player_y
+                                                      + PLAYER_HEIGHT/2)
 
         if self._normalize_obs:
-            player_y /= self._screen_size[1]
-            player_vel_y /= PLAYER_MAX_VEL_Y
-            next_pipe_dist /= self._screen_size[0]
-            next_pipe_y /= self._screen_size[1]
+            h_dist /= self._screen_size[0]
+            v_dist /= self._screen_size[1]
 
         return np.array([
-            player_y,
-            player_vel_y,
-            next_pipe_dist,
-            next_pipe_y,
+            h_dist,
+            v_dist,
         ])
 
     def step(self,
@@ -124,9 +125,10 @@ class FlappyBirdEnv(gym.Env):
         Returns:
             A tuple containing, respectively:
 
-                * an observation (bird's y position; bird's y velocity;
-                  horizontal distance to the next pipe; next pipe's y position);
-                * a reward (1 if the agent passed a pipe and 0 otherwise);
+                * an observation (horizontal distance to the next pipe;
+                  difference between the player's y position and the next hole's
+                  y position);
+                * a reward (always 1);
                 * a status report (`True` if the game is over and `False`
                   otherwise);
                 * an info dictionary.
@@ -134,8 +136,7 @@ class FlappyBirdEnv(gym.Env):
         alive = self._game.update_state(action)
         obs = self._get_observation()
 
-        reward = self._game.score - self._last_score
-        self._last_score = self._game.score
+        reward = 1
 
         done = not alive
         info = {"score": self._game.score}
