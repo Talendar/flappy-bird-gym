@@ -30,7 +30,9 @@ import numpy as np
 import pygame
 from gym import spaces
 
-from flappy_bird_gym.envs.game_logic import FlappyBirdLogic, PIPE_WIDTH
+from flappy_bird_gym.envs.game_logic import FlappyBirdLogic
+from flappy_bird_gym.envs.game_logic import PIPE_WIDTH
+from flappy_bird_gym.envs.game_logic import PLAYER_MAX_VEL_Y
 from flappy_bird_gym.envs.renderer import FlappyBirdRenderer
 
 
@@ -49,6 +51,8 @@ class FlappyBirdEnv(gym.Env):
 
     Args:
         screen_size (Tuple[int, int]): The screen's width and height.
+        normalize_obs (bool): If `True`, the observations will be normalized
+            before being returned.
         pipe_gap (int): Space between a lower and an upper pipe.
         bird_color (str): Color of the flappy bird. The currently available
             colors are "yellow", "blue" and "red".
@@ -62,6 +66,7 @@ class FlappyBirdEnv(gym.Env):
 
     def __init__(self,
                  screen_size: Tuple[int, int] = (288, 512),
+                 normalize_obs: bool = True,
                  pipe_gap: int = 100,
                  bird_color: str = "yellow",
                  pipe_color: str = "green",
@@ -71,6 +76,7 @@ class FlappyBirdEnv(gym.Env):
                                             shape=(4,),
                                             dtype=np.float32)
         self._screen_size = screen_size
+        self._normalize_obs = normalize_obs
         self._pipe_gap = pipe_gap
 
         self._game = None
@@ -88,11 +94,22 @@ class FlappyBirdEnv(gym.Env):
                 next_pipe = pipe
                 break
 
+        player_y = self._game.player_y
+        player_vel_y = self._game.player_vel_y
+        next_pipe_dist = (next_pipe["x"] + PIPE_WIDTH) / 2 - self._game.player_x
+        next_pipe_y = next_pipe["y"]
+
+        if self._normalize_obs:
+            player_y /= self._screen_size[1]
+            player_vel_y /= PLAYER_MAX_VEL_Y
+            next_pipe_dist /= self._screen_size[0]
+            next_pipe_y /= self._screen_size[1]
+
         return np.array([
-            self._game.player_y,
-            self._game.player_vel_y,
-            (next_pipe["x"] + PIPE_WIDTH) / 2 - self._game.player_x,
-            next_pipe["y"],
+            player_y,
+            player_vel_y,
+            next_pipe_dist,
+            next_pipe_y,
         ])
 
     def step(self,
