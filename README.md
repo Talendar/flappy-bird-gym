@@ -1,5 +1,9 @@
 ## Flappy Bird for OpenAI Gym
 
+![Python versions](https://img.shields.io/pypi/pyversions/flappy-bird-gym)
+[![PyPI](https://img.shields.io/pypi/v/flappy-bird-gym)](https://pypi.org/project/flappy-bird-gym/)
+[![License](https://img.shields.io/github/license/Talendar/flappy-bird-gym)](https://github.com/Talendar/flappy-bird-gym/blob/master/LICENSE)
+
 This repository contains an implementation of an OpenAI Gym environment for the Flappy Bird
 game. It's based on [FlapPyBird](https://github.com/sourabhv/FlapPyBird), by
 [@sourabhv](https://github.com/sourabhv). Currently, the environment provides the following
