@@ -27,6 +27,7 @@ from typing import Dict, Tuple, Union
 
 import gym
 import numpy as np
+import pygame
 from gym import spaces
 
 from flappy_bird_gym.envs.game_logic import FlappyBirdLogic, PIPE_WIDTH
@@ -143,3 +144,9 @@ class FlappyBirdEnv(gym.Env):
             self._renderer.game = self._game
 
         self._renderer.render()
+
+    def close(self):
+        if self._renderer is not None:
+            pygame.display.quit()
+            self._renderer = None
+        super().close()

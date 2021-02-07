@@ -27,7 +27,7 @@
 from typing import List
 import setuptools
 
-_VERSION = "0.1.1"
+_VERSION = "0.1.2"
 
 # Short description.
 short_description = "An OpenAI gym environment for the Flappy Bird game."
@@ -62,6 +62,8 @@ setuptools.setup(
     download_url="https://github.com/Talendar/flappy-bird-gym/releases",
     # Contained modules and scripts:
     packages=setuptools.find_packages(),
+    package_data={"flappy_bird_gym": ["assets/sprites/*",
+                                      "assets/audio/*"]},
     install_requires=REQUIRED_PACKAGES,
     tests_require=REQUIRED_PACKAGES + TEST_PACKAGES,
     # PyPI package information:

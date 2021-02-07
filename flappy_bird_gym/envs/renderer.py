@@ -61,7 +61,7 @@ class FlappyBirdRenderer:
         self._screen_width = screen_size[0]
         self._screen_height = screen_size[1]
 
-        self._display = pygame.display.set_mode(screen_size)
+        self.display = pygame.display.set_mode(screen_size)
         self.images = utils.load_images(bird_color=bird_color,
                                         pipe_color=pipe_color,
                                         bg_type=background)
@@ -83,8 +83,8 @@ class FlappyBirdRenderer:
         x_offset = (self._screen_width - total_width) / 2
 
         for digit in score_digits:
-            self._display.blit(self.images['numbers'][digit],
-                               (x_offset, self._screen_height * 0.1))
+            self.display.blit(self.images['numbers'][digit],
+                              (x_offset, self._screen_height * 0.1))
             x_offset += self.images['numbers'][digit].get_width()
 
     def render(self) -> None:
@@ -97,17 +97,17 @@ class FlappyBirdRenderer:
             self.sounds[self.game.sound_cache].play()
 
         # Images:
-        self._display.blit(self.images['background'], (0, 0))
+        self.display.blit(self.images['background'], (0, 0))
 
         for up_pipe, low_pipe in zip(self.game.upper_pipes,
                                      self.game.lower_pipes):
-            self._display.blit(self.images['pipe'][0],
-                               (up_pipe['x'], up_pipe['y']))
-            self._display.blit(self.images['pipe'][1],
-                               (low_pipe['x'], low_pipe['y']))
+            self.display.blit(self.images['pipe'][0],
+                              (up_pipe['x'], up_pipe['y']))
+            self.display.blit(self.images['pipe'][1],
+                              (low_pipe['x'], low_pipe['y']))
 
-        self._display.blit(self.images['base'], (self.game.base_x,
-                                                 self.game.base_y))
+        self.display.blit(self.images['base'], (self.game.base_x,
+                                                self.game.base_y))
         # print score so player overlaps the score
         self._show_score()
 
@@ -121,7 +121,7 @@ class FlappyBirdRenderer:
             visible_rot,
         )
 
-        self._display.blit(player_surface, (self.game.player_x,
-                                            self.game.player_y))
+        self.display.blit(player_surface, (self.game.player_x,
+                                           self.game.player_y))
 
         pygame.display.update()

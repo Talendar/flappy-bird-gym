@@ -53,6 +53,8 @@ def main():
             time.sleep(0.5)
             break
 
+    env.close()
+
 
 if __name__ == "__main__":
     main()

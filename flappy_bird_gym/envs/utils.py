@@ -81,43 +81,47 @@ def load_images(bg_type: str = "day",
     """ Loads and returns the image assets of the game. """
     images = {}
 
-    # Sprites with the number for the score display:
-    images["numbers"] = tuple([
-        pyg_image.load(f"{SPRITES_PATH}/{n}.png").convert_alpha()
-        for n in range(10)
-    ])
+    try:
+        # Sprites with the number for the score display:
+        images["numbers"] = tuple([
+            pyg_image.load(f"{SPRITES_PATH}/{n}.png").convert_alpha()
+            for n in range(10)
+        ])
 
-    # Game over sprite:
-    images["gameover"] = pyg_image.load(
-        f"{SPRITES_PATH}/gameover.png").convert_alpha()
+        # Game over sprite:
+        images["gameover"] = pyg_image.load(
+            f"{SPRITES_PATH}/gameover.png").convert_alpha()
 
-    # Welcome screen message sprite:
-    images["message"] = pyg_image.load(
-        f"{SPRITES_PATH}/message.png").convert_alpha()
+        # Welcome screen message sprite:
+        images["message"] = pyg_image.load(
+            f"{SPRITES_PATH}/message.png").convert_alpha()
 
-    # Sprite for the base (ground):
-    images["base"] = pyg_image.load(
-        f"{SPRITES_PATH}/base.png").convert_alpha()
+        # Sprite for the base (ground):
+        images["base"] = pyg_image.load(
+            f"{SPRITES_PATH}/base.png").convert_alpha()
 
-    # Background sprite:
-    images["background"] = pyg_image.load(
-        f"{SPRITES_PATH}/background-{bg_type}.png").convert()
+        # Background sprite:
+        images["background"] = pyg_image.load(
+            f"{SPRITES_PATH}/background-{bg_type}.png").convert()
 
-    # Bird sprites:
-    images["player"] = (
-        pyg_image.load(
-            f"{SPRITES_PATH}/{bird_color}bird-upflap.png").convert_alpha(),
-        pyg_image.load(
-            f"{SPRITES_PATH}/{bird_color}bird-midflap.png").convert_alpha(),
-        pyg_image.load(
-            f"{SPRITES_PATH}/{bird_color}bird-downflap.png").convert_alpha(),
-    )
+        # Bird sprites:
+        images["player"] = (
+            pyg_image.load(
+                f"{SPRITES_PATH}/{bird_color}bird-upflap.png").convert_alpha(),
+            pyg_image.load(
+                f"{SPRITES_PATH}/{bird_color}bird-midflap.png").convert_alpha(),
+            pyg_image.load(
+                f"{SPRITES_PATH}/{bird_color}bird-downflap.png").convert_alpha(),
+        )
 
-    # Pipe sprites:
-    pipe_sprite = pyg_image.load(
-        f"{SPRITES_PATH}/pipe-{pipe_color}.png").convert_alpha()
-    images["pipe"] = (img_flip(pipe_sprite, False, True),
-                      pipe_sprite)
+        # Pipe sprites:
+        pipe_sprite = pyg_image.load(
+            f"{SPRITES_PATH}/pipe-{pipe_color}.png").convert_alpha()
+        images["pipe"] = (img_flip(pipe_sprite, False, True),
+                          pipe_sprite)
+    except FileNotFoundError as ex:
+        raise FileNotFoundError("Can't find the sprites folder! No such file or"
+                                f" directory: {SPRITES_PATH}") from ex
 
     return images
 
@@ -132,10 +136,14 @@ def load_sounds() -> Dict[str, pyg_mixer.Sound]:
     else:
         soundExt = ".ogg"
 
-    sounds["die"] = pyg_mixer.Sound(AUDIO_PATH + "/die" + soundExt)
-    sounds["hit"] = pyg_mixer.Sound(AUDIO_PATH + "/hit" + soundExt)
-    sounds["point"] = pyg_mixer.Sound(AUDIO_PATH + "/point" + soundExt)
-    sounds["swoosh"] = pyg_mixer.Sound(AUDIO_PATH + "/swoosh" + soundExt)
-    sounds["wing"] = pyg_mixer.Sound(AUDIO_PATH + "/wing" + soundExt)
+    try:
+        sounds["die"] = pyg_mixer.Sound(AUDIO_PATH + "/die" + soundExt)
+        sounds["hit"] = pyg_mixer.Sound(AUDIO_PATH + "/hit" + soundExt)
+        sounds["point"] = pyg_mixer.Sound(AUDIO_PATH + "/point" + soundExt)
+        sounds["swoosh"] = pyg_mixer.Sound(AUDIO_PATH + "/swoosh" + soundExt)
+        sounds["wing"] = pyg_mixer.Sound(AUDIO_PATH + "/wing" + soundExt)
+    except FileNotFoundError as ex:
+        raise FileNotFoundError("Can't find the audio folder! No such file or "
+                                f"directory: {AUDIO_PATH}") from ex
 
     return sounds
