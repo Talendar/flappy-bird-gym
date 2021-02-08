@@ -29,13 +29,17 @@ GitHub repository by `sourahbhv` (https://github.com/sourabhv/FlapPyBird),
 released under the MIT license.
 """
 
-from typing import Tuple
+from typing import Optional, Tuple
 
 import pygame
 
 from flappy_bird_gym.envs import utils
 
-PLAYER_ROT_THR = 20  # rotation threshold
+#: Player's rotation threshold.
+PLAYER_ROT_THR = 20
+
+#: Color to fill the surface's background when no background image was loaded.
+FILL_BACKGROUND_COLOR = (200, 200, 200)
 
 
 class FlappyBirdRenderer:
@@ -57,23 +61,44 @@ class FlappyBirdRenderer:
                  audio_on: bool = True,
                  bird_color: str = "yellow",
                  pipe_color: str = "green",
-                 background: str = "day") -> None:
+                 background: Optional[str] = "day") -> None:
         self._screen_width = screen_size[0]
         self._screen_height = screen_size[1]
 
-        self.display = pygame.display.set_mode(screen_size)
-        self.images = utils.load_images(bird_color=bird_color,
+        self.display = None
+        self.surface = pygame.Surface(screen_size)
+        self.images = utils.load_images(convert=False,
+                                        bird_color=bird_color,
                                         pipe_color=pipe_color,
                                         bg_type=background)
         self.audio_on = audio_on
+        self._audio_queue = []
         if audio_on:
             self.sounds = utils.load_sounds()
 
         self.game = None
         self._clock = pygame.time.Clock()
 
-    def _show_score(self) -> None:
-        """ Displays score in center of screen. """
+    def make_display(self) -> None:
+        """ Initializes the pygame's display.
+
+        Required for drawing images on the screen.
+        """
+        self.display = pygame.display.set_mode((self._screen_width,
+                                                self._screen_height))
+        for name, value in self.images.items():
+            if value is None:
+                continue
+
+            if type(value) in (tuple, list):
+                self.images[name] = tuple([img.convert_alpha()
+                                           for img in value])
+            else:
+                self.images[name] = (value.convert() if name == "background"
+                                     else value.convert_alpha())
+
+    def _draw_score(self) -> None:
+        """ Draws the score in the center of the surface. """
         score_digits = [int(x) for x in list(str(self.game.score))]
         total_width = 0  # total width of all numbers to be printed
 
@@ -83,45 +108,78 @@ class FlappyBirdRenderer:
         x_offset = (self._screen_width - total_width) / 2
 
         for digit in score_digits:
-            self.display.blit(self.images['numbers'][digit],
+            self.surface.blit(self.images['numbers'][digit],
                               (x_offset, self._screen_height * 0.1))
             x_offset += self.images['numbers'][digit].get_width()
 
-    def render(self) -> None:
-        """ Renders the next frame. """
+    def draw_surface(self, show_score: bool = True) -> None:
+        """ Re-draws the renderer's surface.
+
+        This method updates the renderer's surface by re-drawing it according to
+        the current state of the game.
+
+        Args:
+            show_score (bool): Whether to draw the player's score or not.
+        """
         if self.game is None:
             raise ValueError("A game logic must be assigned to the renderer!")
 
-        # Sounds:
-        if self.audio_on and self.game.sound_cache is not None:
-            self.sounds[self.game.sound_cache].play()
+        # Background
+        if self.images['background'] is not None:
+            self.surface.blit(self.images['background'], (0, 0))
+        else:
+            self.surface.fill(FILL_BACKGROUND_COLOR)
 
-        # Images:
-        self.display.blit(self.images['background'], (0, 0))
-
+        # Pipes
         for up_pipe, low_pipe in zip(self.game.upper_pipes,
                                      self.game.lower_pipes):
-            self.display.blit(self.images['pipe'][0],
+            self.surface.blit(self.images['pipe'][0],
                               (up_pipe['x'], up_pipe['y']))
-            self.display.blit(self.images['pipe'][1],
+            self.surface.blit(self.images['pipe'][1],
                               (low_pipe['x'], low_pipe['y']))
 
-        self.display.blit(self.images['base'], (self.game.base_x,
+        # Base (ground)
+        self.surface.blit(self.images['base'], (self.game.base_x,
                                                 self.game.base_y))
-        # print score so player overlaps the score
-        self._show_score()
 
-        # Player rotation has a threshold
+        # Score
+        # (must be drawn before the player, so the player overlaps it)
+        if show_score:
+            self._draw_score()
+
+        # Getting player's rotation
         visible_rot = PLAYER_ROT_THR
         if self.game.player_rot <= PLAYER_ROT_THR:
             visible_rot = self.game.player_rot
 
+        # Player
         player_surface = pygame.transform.rotate(
             self.images['player'][self.game.player_idx],
             visible_rot,
         )
 
-        self.display.blit(player_surface, (self.game.player_x,
+        self.surface.blit(player_surface, (self.game.player_x,
                                            self.game.player_y))
 
+    def update_display(self) -> None:
+        """ Updates the display with the current surface of the renderer.
+
+        A call to this method is usually preceded by a call to
+        :meth:`.draw_surface()`. This method simply updates the display by
+        showing the current state of the renderer's surface on it, it doesn't
+        make any change to the surface.
+        """
+        if self.display is None:
+            raise RuntimeError(
+                "Tried to update the display, but a display hasn't been "
+                "created yet! To create a display for the renderer, you must "
+                "call the `make_display()` method."
+            )
+
+        self.display.blit(self.surface, [0, 0])
         pygame.display.update()
+
+        # Sounds:
+        if self.audio_on and self.game.sound_cache is not None:
+            sound_name = self.game.sound_cache
+            self.sounds[sound_name].play()

@@ -21,40 +21,52 @@
 # SOFTWARE.
 # ==============================================================================
 
-""" Tests the flappy bird environment with a human player.
+""" Tests the simple-observations version of the Flappy Bird environment with a
+human player.
 """
 
 import time
+
+import pygame
 import flappy_bird_gym
 
 
-def main():
+def play():
     # env = gym.make("flappy_bird_gym:FlappyBird-v0")
     env = flappy_bird_gym.make("FlappyBird-v0")
+
+    clock = pygame.time.Clock()
     score = 0
+
     obs = env.reset()
     while True:
         env.render()
 
-        # Getting random action:
-        action = env.action_space.sample()
+        # Getting action:
+        action = 0
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if (event.type == pygame.KEYDOWN and
+                    (event.key == pygame.K_SPACE or event.key == pygame.K_UP)):
+                action = 1
 
         # Processing:
         obs, reward, done, info = env.step(action)
 
         score += reward
-        print(f"Obs: {obs}\n"
-              f"Score: {score}\n")
+        print(f"Obs: {obs}")
+        print(f"Score: {score}\n")
 
-        time.sleep(1 / 30)
+        clock.tick(15)
 
         if done:
             env.render()
-            time.sleep(0.5)
+            time.sleep(0.6)
             break
 
     env.close()
 
 
 if __name__ == "__main__":
-    main()
+    play()

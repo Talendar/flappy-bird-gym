@@ -4,16 +4,21 @@
 [![PyPI](https://img.shields.io/pypi/v/flappy-bird-gym)](https://pypi.org/project/flappy-bird-gym/)
 [![License](https://img.shields.io/github/license/Talendar/flappy-bird-gym)](https://github.com/Talendar/flappy-bird-gym/blob/master/LICENSE)
 
-This repository contains an implementation of an OpenAI Gym environment for the Flappy Bird
-game. It's based on [FlapPyBird](https://github.com/sourabhv/FlapPyBird), by
-[@sourabhv](https://github.com/sourabhv). Currently, the environment provides the following
-observation parameters to the agents: 
+This repository contains the implementation of two OpenAI Gym environments for
+the Flappy Bird game. The implementation of the game's logic and graphics was
+based on the [FlapPyBird](https://github.com/sourabhv/FlapPyBird) project, by
+[@sourabhv](https://github.com/sourabhv). 
 
-* Horizontal distance to the next pipe;
-* Difference between the player's y position and the next hole's y position.
+The two environments differ only on the type of observations they yield for the
+agents. The "FlappyBird-rgb-v0" environment, yields RGB-arrays (images)
+representing the game's screen. The "FlappyBird-v0" environment, on the other
+hand, yields simple numerical information about the game's state as
+observations. The yielded attributes are the:
 
-In the future, I also intend to implement a version of the environment that provides an
-image representing the game's screen as observation.
+* horizontal distance to the next pipe;
+* difference between the player's y position and the next hole's y position.
+
+<br>
 
 <p align="center">
   <img align="center" 
@@ -37,9 +42,9 @@ To install `flappy-bird-gym`, simply run the following command:
     
 ## Usage
 
-Like with other `gym` environments, it's very easy to use `flappy-bird-gym`. Simply import the
-package and create the environment with the `make` function. Take a look at the sample code
-below:
+Like with other `gym` environments, it's very easy to use `flappy-bird-gym`.
+Simply import the package and create the environment with the `make` function.
+Take a look at the sample code below:
 
 ```
 import time

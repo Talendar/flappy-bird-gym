@@ -20,15 +20,15 @@
 # SOFTWARE.
 # ==============================================================================
 
-""" Implementation of the flappy bird gym environment.
+""" Implementation of a Flappy Bird OpenAI Gym environment that yields simple
+numerical information about the game's state as observations.
 """
 
-from typing import Dict, Tuple, Union
+from typing import Dict, Tuple, Optional, Union
 
 import gym
 import numpy as np
 import pygame
-from gym import spaces
 
 from flappy_bird_gym.envs.game_logic import FlappyBirdLogic
 from flappy_bird_gym.envs.game_logic import PIPE_WIDTH, PIPE_HEIGHT
@@ -36,17 +36,19 @@ from flappy_bird_gym.envs.game_logic import PLAYER_WIDTH, PLAYER_HEIGHT
 from flappy_bird_gym.envs.renderer import FlappyBirdRenderer
 
 
-class FlappyBirdEnv(gym.Env):
-    """ Flappy bird gym environment.
+class FlappyBirdEnvSimple(gym.Env):
+    """ Flappy Bird Gym environment that yields simple observations.
+
+    The observations yielded by this environment are simple numerical
+    information about the game's state. Specifically, the observations are:
+
+        * Horizontal distance to the next pipe;
+        * Difference between the player's y position and the next hole's y
+          position.
 
     The reward received by the agent in each step is equal to the score obtained
     by the agent in that step. A score point is obtained every time the bird
     passes a pipe.
-
-    About the observation space:
-        [0] Horizontal distance to the next pipe;
-        [1] Difference between the player's y position and the next hole's y
-            position.
 
     Args:
         screen_size (Tuple[int, int]): The screen's width and height.
@@ -57,8 +59,9 @@ class FlappyBirdEnv(gym.Env):
             colors are "yellow", "blue" and "red".
         pipe_color (str): Color of the pipes. The currently available colors are
             "green" and "red".
-        background (str): Type of background image. The currently available
-            types are "day" and "night".
+        background (Optional[str]): Type of background image. The currently
+            available types are "day" and "night". If `None`, no background will
+            be drawn.
     """
 
     metadata = {'render.modes': ['human']}
@@ -69,18 +72,17 @@ class FlappyBirdEnv(gym.Env):
                  pipe_gap: int = 100,
                  bird_color: str = "yellow",
                  pipe_color: str = "green",
-                 background: str = "day") -> None:
-        self.action_space = spaces.Discrete(2)
-        self.observation_space = spaces.Box(-np.inf, np.inf,
-                                            shape=(2,),
-                                            dtype=np.float32)
+                 background: Optional[str] = "day") -> None:
+        self.action_space = gym.spaces.Discrete(2)
+        self.observation_space = gym.spaces.Box(-np.inf, np.inf,
+                                                shape=(2,),
+                                                dtype=np.float32)
         self._screen_size = screen_size
         self._normalize_obs = normalize_obs
         self._pipe_gap = pipe_gap
 
         self._game = None
         self._renderer = None
-        self._last_score = 0
 
         self._bird_color = bird_color
         self._pipe_color = pipe_color
@@ -152,7 +154,7 @@ class FlappyBirdEnv(gym.Env):
 
         return self._get_observation()
 
-    def render(self, mode='human'):
+    def render(self, mode='human') -> None:
         """ Renders the next frame. """
         if self._renderer is None:
             self._renderer = FlappyBirdRenderer(screen_size=self._screen_size,
@@ -160,10 +162,13 @@ class FlappyBirdEnv(gym.Env):
                                                 pipe_color=self._pipe_color,
                                                 background=self._bg_type)
             self._renderer.game = self._game
+            self._renderer.make_display()
 
-        self._renderer.render()
+        self._renderer.draw_surface(show_score=True)
+        self._renderer.update_display()
 
     def close(self):
+        """ Closes the environment. """
         if self._renderer is not None:
             pygame.display.quit()
             self._renderer = None

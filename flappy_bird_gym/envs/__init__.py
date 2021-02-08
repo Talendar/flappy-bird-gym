@@ -23,4 +23,5 @@
 """ Exposes the environment class.
 """
 
-from flappy_bird_gym.envs.flappy_bird_env import FlappyBirdEnv
+from flappy_bird_gym.envs.flappy_bird_env_rgb import FlappyBirdEnvRGB
+from flappy_bird_gym.envs.flappy_bird_env_simple import FlappyBirdEnvSimple
