@@ -31,7 +31,7 @@ released under the MIT license.
 import os
 from pathlib import Path
 import sys
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from pygame import image as pyg_image
 from pygame import mixer as pyg_mixer
@@ -75,7 +75,15 @@ def get_hitmask(image) -> List[List[bool]]:
     return mask
 
 
-def load_images(bg_type: str = "day",
+def _load_sprite(filename, convert, alpha=True):
+    img = pyg_image.load(f"{SPRITES_PATH}/{filename}")
+    return (img.convert_alpha() if convert and alpha
+            else img.convert() if convert
+            else img)
+
+
+def load_images(convert: bool = True,
+                bg_type: Optional[str] = "day",
                 bird_color: str = "yellow",
                 pipe_color: str = "green") -> Dict[str, Any]:
     """ Loads and returns the image assets of the game. """
@@ -84,39 +92,42 @@ def load_images(bg_type: str = "day",
     try:
         # Sprites with the number for the score display:
         images["numbers"] = tuple([
-            pyg_image.load(f"{SPRITES_PATH}/{n}.png").convert_alpha()
+            _load_sprite(f"{n}.png", convert=convert, alpha=True)
             for n in range(10)
         ])
 
         # Game over sprite:
-        images["gameover"] = pyg_image.load(
-            f"{SPRITES_PATH}/gameover.png").convert_alpha()
+        images["gameover"] = _load_sprite("gameover.png",
+                                          convert=convert, alpha=True)
 
         # Welcome screen message sprite:
-        images["message"] = pyg_image.load(
-            f"{SPRITES_PATH}/message.png").convert_alpha()
+        images["message"] = _load_sprite("message.png",
+                                         convert=convert, alpha=True)
 
         # Sprite for the base (ground):
-        images["base"] = pyg_image.load(
-            f"{SPRITES_PATH}/base.png").convert_alpha()
+        images["base"] = _load_sprite("base.png",
+                                      convert=convert, alpha=True)
 
         # Background sprite:
-        images["background"] = pyg_image.load(
-            f"{SPRITES_PATH}/background-{bg_type}.png").convert()
+        if bg_type is None:
+            images["background"] = None
+        else:
+            images["background"] = _load_sprite(f"background-{bg_type}.png",
+                                                convert=convert, alpha=False)
 
         # Bird sprites:
         images["player"] = (
-            pyg_image.load(
-                f"{SPRITES_PATH}/{bird_color}bird-upflap.png").convert_alpha(),
-            pyg_image.load(
-                f"{SPRITES_PATH}/{bird_color}bird-midflap.png").convert_alpha(),
-            pyg_image.load(
-                f"{SPRITES_PATH}/{bird_color}bird-downflap.png").convert_alpha(),
+            _load_sprite(f"{bird_color}bird-upflap.png",
+                         convert=convert, alpha=True),
+            _load_sprite(f"{bird_color}bird-midflap.png",
+                         convert=convert, alpha=True),
+            _load_sprite(f"{bird_color}bird-downflap.png",
+                         convert=convert, alpha=True),
         )
 
         # Pipe sprites:
-        pipe_sprite = pyg_image.load(
-            f"{SPRITES_PATH}/pipe-{pipe_color}.png").convert_alpha()
+        pipe_sprite = _load_sprite(f"pipe-{pipe_color}.png",
+                                   convert=convert, alpha=True)
         images["pipe"] = (img_flip(pipe_sprite, False, True),
                           pipe_sprite)
     except FileNotFoundError as ex:
