@@ -12,7 +12,12 @@ import sys
 import pygame
 from pygame.locals import *
 
-ASSETS_DIR = "./flappy_bird_gym/assets"
+# Fix for issue : https://github.com/Talendar/flappy-bird-gym/issues/3 by prabathbr (https://github.com/prabathbr/)
+import os
+from pathlib import Path
+_BASE_DIR = Path(os.path.dirname(os.path.realpath(__file__))).parent
+ASSETS_DIR = str(_BASE_DIR / "flappy_bird_gym/assets")
+
 
 FPS = 30
 SCREEN_WIDTH = 288
